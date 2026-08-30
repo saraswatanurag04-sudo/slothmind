@@ -1,0 +1,90 @@
+{
+  "entities": {
+    "JournalEntry": {
+      "title": "JournalEntry",
+      "description": "User journal entry with AI multi-turn reflections, sentiment metadata, and pinned geolocation.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "userId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "title": { "type": "string", "maxLength": 300 },
+        "summary": { "type": "string", "maxLength": 2000 },
+        "tags": { "type": "array" },
+        "sentiment": { "type": "string", "enum": ["positive", "neutral", "reflective", "challenging", "celebratory"] },
+        "messages": { "type": "array" },
+        "createdAt": { "type": "number" },
+        "updatedAt": { "type": "number" },
+        "wordCount": { "type": "number" },
+        "primaryMode": { "type": "string", "enum": ["reflection", "brainstorm", "summary", "action_plan", "gratitude"] },
+        "starred": { "type": "boolean" },
+        "location": {
+          "type": "object",
+          "properties": {
+            "placeName": { "type": "string", "maxLength": 300 },
+            "address": { "type": "string", "maxLength": 500 },
+            "lat": { "type": "number" },
+            "lng": { "type": "number" },
+            "placeId": { "type": "string", "maxLength": 256 }
+          }
+        }
+      },
+      "required": ["id", "userId", "title", "createdAt", "updatedAt"]
+    },
+    "NotificationConfig": {
+      "title": "NotificationConfig",
+      "description": "External notification destination settings (Slack/Discord/Webhook) for journal events.",
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "channel": { "type": "string", "enum": ["slack", "discord", "email_webhook"] },
+        "webhookUrl": { "type": "string", "maxLength": 1000 },
+        "triggers": { "type": "object" },
+        "updatedAt": { "type": "number" }
+      }
+    },
+    "AdminRole": {
+      "title": "AdminRole",
+      "description": "Administrator identity document for RBAC validation.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "maxLength": 128 },
+        "email": { "type": "string", "maxLength": 256 },
+        "role": { "type": "string", "enum": ["admin", "superadmin"] },
+        "grantedAt": { "type": "number" }
+      },
+      "required": ["uid", "email", "role"]
+    },
+    "AdminAuditLog": {
+      "title": "AdminAuditLog",
+      "description": "Audit log for administrative operations and security events.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "operatorUid": { "type": "string", "maxLength": 128 },
+        "action": { "type": "string", "maxLength": 128 },
+        "target": { "type": "string", "maxLength": 256 },
+        "details": { "type": "string", "maxLength": 1000 },
+        "timestamp": { "type": "number" }
+      },
+      "required": ["id", "operatorUid", "action", "timestamp"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}/entries/{entryId}": {
+      "schema": "JournalEntry",
+      "description": "Private, owner-bound journal entries with AI reflection exchanges and geolocation."
+    },
+    "/users/{userId}/settings/notifications": {
+      "schema": "NotificationConfig",
+      "description": "User-specific external notification webhooks and trigger preferences."
+    },
+    "/admins/{adminId}": {
+      "schema": "AdminRole",
+      "description": "Authorized administrator records for role-based access control."
+    },
+    "/admin_audit_logs/{logId}": {
+      "schema": "AdminAuditLog",
+      "description": "Tamper-evident audit trail for admin actions and platform security events."
+    }
+  }
+}

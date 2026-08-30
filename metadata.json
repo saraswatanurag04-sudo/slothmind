@@ -1,0 +1,6 @@
+{
+  "name": "MindReflect AI",
+  "description": "A secure, user-authenticated journaling and reflection assistant powered by Gemini 3.6 Flash, Google Maps Platform geolocation, RBAC Admin controls, and external notification dispatching.",
+  "requestFramePermissions": ["geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
